@@ -3,6 +3,11 @@ const graphqlHTTP = require("express-graphql");
 const { buildSchema } = require("graphql");
 // The data below is mocked.
 const data = require("./data/pokemon.js");
+const strData = JSON.stringify(data)
+  .replace("Previous evolution(s)", "previousEvolutions")
+  .replace("Common Capture Area", "commonCaptureArea")
+  .replace("Pokémon Class", "pokemonClass");
+const correctData = JSON.parse(strData);
 
 // The schema should model the full data object available.
 const schema = buildSchema(`
@@ -16,6 +21,8 @@ const schema = buildSchema(`
     weight: Weight
     height: Height
     fleeRate: Float
+    commonCaptureArea: String
+    pokemonClass: String
     previousEvolutions: [Evolution]
     evolutionRequirements: EvolutionRequirements
     evolutions: [Evolution]
@@ -60,25 +67,10 @@ const schema = buildSchema(`
 // The root provides the resolver functions for each type of query or mutation.
 const root = {
   Pokemons: () => {
-    const fieldNames = [];
-    data.forEach((item) => {
-      Object.keys(item).forEach((key) => {
-        if (!fieldNames.includes(key)) {
-          fieldNames.push(key);
-        }
-      });
-    });
-    console.log(fieldNames);
-    return data;
+    return correctData;
   },
   Pokemon: (request) => {
-    let response = data.find((pokemon) => pokemon.name === request.name);
-    response = JSON.stringify(response).replace(
-      "Previous evolution(s)",
-      "previousEvolutions"
-    );
-
-    return JSON.parse(response);
+    return correctData.find((pokemon) => pokemon.name === request.name);
   },
 };
 
