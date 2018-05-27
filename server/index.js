@@ -9,7 +9,48 @@ const schema = buildSchema(`
   type Pokemon {
     id: String
     name: String!
+    classification: String
+    types: [String]
+    resistant: [String]
+    weaknesses: [String]
+    weight: Weight
+    height: Height
+    fleeRate: Float
+    previousEvolutions: [Evolution]
+    evolutionRequirements: EvolutionRequirements
+    evolutions: [Evolution]
+    maxCP: Int
+    maxHP: Int
+    attacks: Attacks
   }
+  type Weight {
+    minimum: String
+    maximum: String
+  }
+  type Height {
+    minimum: String
+    maximum: String
+  }
+  type EvolutionRequirements {
+    amount: Int
+    name: String
+  }
+  type Evolution {
+    id: Int
+    name: String
+  }
+
+  type Attacks {
+    fast: [Attack]
+    special: [Attack]
+  }
+
+  type Attack {
+    name: String
+    type: String
+    damage: Int
+  }
+
   type Query {
     Pokemons: [Pokemon]
     Pokemon(name: String): Pokemon
@@ -19,10 +60,25 @@ const schema = buildSchema(`
 // The root provides the resolver functions for each type of query or mutation.
 const root = {
   Pokemons: () => {
+    const fieldNames = [];
+    data.forEach((item) => {
+      Object.keys(item).forEach((key) => {
+        if (!fieldNames.includes(key)) {
+          fieldNames.push(key);
+        }
+      });
+    });
+    console.log(fieldNames);
     return data;
   },
   Pokemon: (request) => {
-    return data.find((pokemon) => pokemon.name === request.name);
+    let response = data.find((pokemon) => pokemon.name === request.name);
+    response = JSON.stringify(response).replace(
+      "Previous evolution(s)",
+      "previousEvolutions"
+    );
+
+    return JSON.parse(response);
   },
 };
 
