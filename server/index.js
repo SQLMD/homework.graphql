@@ -52,6 +52,10 @@ const schema = buildSchema(`
     special: [Attack]
   }
 
+  type Type {
+    name: String
+  }
+
   type Attack {
     name: String
     type: String
@@ -61,7 +65,10 @@ const schema = buildSchema(`
   type Query {
     Pokemons: [Pokemon]
     Pokemon(name: String): Pokemon
+    Types: [Type]
   }
+
+ 
 `);
 
 // The root provides the resolver functions for each type of query or mutation.
@@ -71,6 +78,19 @@ const root = {
   },
   Pokemon: (request) => {
     return correctData.find((pokemon) => pokemon.name === request.name);
+  },
+  Types: () => {
+    const types = [];
+    correctData.forEach((pokemon) => {
+      pokemon.types.forEach((type) => {
+        if (!types.includes(type)) {
+          types.push(type);
+        }
+      });
+    });
+    return types.map((type) => ({
+      name: type,
+    }));
   },
 };
 
