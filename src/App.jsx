@@ -44,19 +44,3 @@ class App extends React.Component {
 }
 
 export default App;
-
-// // You can also easily pass variables for dynamic arguments
-// fetch({
-//   query: `query PostsForAuthor($id: Int!) {
-//     author(id: $id) {
-//       firstName
-//       posts {
-//         title
-//         votes
-//       }
-//     }
-//   }`,
-//   variables: { id: 1 },
-// }).then((res) => {
-//   console.log(res.data);
-// });
