@@ -1,6 +1,6 @@
 const { buildSchema } = require("graphql");
 
-schema = buildSchema(`
+const schema = buildSchema(`
   type Pokemon {
     id: String
     name: String!
